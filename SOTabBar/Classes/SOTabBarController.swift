@@ -26,7 +26,7 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         }
     }
     
-    private lazy var tabBar: SOTabBar = {
+    public lazy var tabBar: SOTabBar = {
         let tabBar = SOTabBar()
         tabBar.delegate = self
         tabBar.translatesAutoresizingMaskIntoConstraints = false
@@ -73,6 +73,10 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
                         safeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                         safeAreaView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    public func seletIndex(_ index: Int) {
+        tabBar.didSelectTab(index: index)
     }
     
     func tabBar(_ tabBar: SOTabBar, didSelectTabAt index: Int) {

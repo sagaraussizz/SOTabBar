@@ -134,7 +134,7 @@ public class SOTabBar: UIView {
         didSelectTab(index: index)
     }
     
-    private func didSelectTab(index: Int) {
+    func didSelectTab(index: Int) {
         if index + 1 == selectedIndex {return}
         animateTitle(index: index)
  
