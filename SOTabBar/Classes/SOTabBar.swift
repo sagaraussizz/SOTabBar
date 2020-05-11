@@ -151,7 +151,7 @@ public class SOTabBar: UIView {
         self.tabSelectedImageView.image = image
     }
     
-    private func animateTitle(index: Int) {
+    func animateTitle(index: Int) {
         self.stackView.arrangedSubviews.enumerated().forEach {
             guard let tabView = $1 as? SOTabBarItem else { return }
             ($0 == index ? tabView.animateTabSelected : tabView.animateTabDeSelect)()

@@ -26,7 +26,7 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         }
     }
     
-    var tabbarHeightConstraint: NSLayoutConstraint?
+    var tabbarHeightConstraint, containerBottomConstraint: NSLayoutConstraint?
     
     public lazy var tabBar: SOTabBar = {
         let tabBar = SOTabBar()
@@ -57,12 +57,16 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         self.view.addSubview(safeAreaView)
         self.view.bringSubviewToFront(safeAreaView)
         var constraints = [NSLayoutConstraint]()
+        
         if #available(iOS 11.0, *) {
-            constraints += [containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(SOTabBarSetting.tabBarHeight)),
-                            tabBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)]
+            
+            containerBottomConstraint = containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(SOTabBarSetting.tabBarHeight))
+            
+            constraints += [tabBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)]
         } else {
-            constraints += [containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(SOTabBarSetting.tabBarHeight)),
-                            tabBar.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
+            
+            containerBottomConstraint = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(SOTabBarSetting.tabBarHeight))
+            constraints += [tabBar.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
         }
         
         tabbarHeightConstraint = tabBar.heightAnchor.constraint(equalToConstant: SOTabBarSetting.tabBarHeight)
@@ -80,6 +84,9 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         if let tabbarHeightConstraint = tabbarHeightConstraint {
             constraints += [tabbarHeightConstraint]
         }
+        if let containerBottomConstraint = containerBottomConstraint {
+            constraints += [containerBottomConstraint]
+        }
         
         NSLayoutConstraint.activate(constraints)
     }
@@ -88,11 +95,20 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         tabBar.didSelectTab(index: index)
     }
     
-    public func setTabbar(_ isHidden: Bool, isAnimated: Bool = false) {
+    public func setTabbar(_ isHidden: Bool, _ index: Int? = nil, isAnimated: Bool = false) {
         
-        UIView.animate(withDuration: isAnimated ? 0.3 : 0) { [weak self] in
-            self?.tabbarHeightConstraint?.constant = isHidden ? 0 : SOTabBarSetting.tabBarHeight
-            self?.view.layoutIfNeeded()
+        UIView.animate(withDuration: isAnimated ? 0.3 : 0, animations: { [weak self] in
+            
+            guard let self = self else { return }
+            self.tabBar.clipsToBounds = isHidden
+            self.containerBottomConstraint?.constant = isHidden ? 0 : -(SOTabBarSetting.tabBarHeight)
+            self.tabbarHeightConstraint?.constant = isHidden ? 0 : SOTabBarSetting.tabBarHeight
+            self.view.layoutIfNeeded()
+        }) { [weak self] isComplete in
+            
+            if let index = index {
+                self?.tabBar.animateTitle(index: index)
+            }
         }
     }
     
