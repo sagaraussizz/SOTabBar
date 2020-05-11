@@ -26,6 +26,8 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         }
     }
     
+    var tabbarHeightConstraint: NSLayoutConstraint?
+    
     public lazy var tabBar: SOTabBar = {
         let tabBar = SOTabBar()
         tabBar.delegate = self
@@ -62,21 +64,36 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
             constraints += [containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(SOTabBarSetting.tabBarHeight)),
                             tabBar.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
         }
+        
+        tabbarHeightConstraint = tabBar.heightAnchor.constraint(equalToConstant: SOTabBarSetting.tabBarHeight)
+        
         constraints += [containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                         containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                         containerView.topAnchor.constraint(equalTo: view.topAnchor),
                         tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                         tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                        tabBar.heightAnchor.constraint(equalToConstant: SOTabBarSetting.tabBarHeight),
                         safeAreaView.topAnchor.constraint(equalTo: tabBar.bottomAnchor),
                         safeAreaView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
                         safeAreaView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                         safeAreaView.bottomAnchor.constraint(equalTo: view.bottomAnchor)]
+        
+        if let tabbarHeightConstraint = tabbarHeightConstraint {
+            constraints += [tabbarHeightConstraint]
+        }
+        
         NSLayoutConstraint.activate(constraints)
     }
     
     public func seletIndex(_ index: Int) {
         tabBar.didSelectTab(index: index)
+    }
+    
+    public func setTabbar(_ isHidden: Bool, isAnimated: Bool = false) {
+        
+        UIView.animate(withDuration: isAnimated ? 0.3 : 0) { [weak self] in
+            self?.tabbarHeightConstraint?.constant = isHidden ? 0 : SOTabBarSetting.tabBarHeight
+            self?.view.layoutIfNeeded()
+        }
     }
     
     func tabBar(_ tabBar: SOTabBar, didSelectTabAt index: Int) {
