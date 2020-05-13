@@ -112,6 +112,10 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         }
     }
     
+    public func showTitle(_ index: Int) {
+        tabBar.animateTitle(index: index)
+    }
+    
     func tabBar(_ tabBar: SOTabBar, didSelectTabAt index: Int) {
         
         let previousVC = viewControllers[index]
