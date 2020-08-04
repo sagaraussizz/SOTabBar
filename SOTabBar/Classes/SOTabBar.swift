@@ -27,7 +27,7 @@ public class SOTabBar: UIView {
         }
     }
     
-    private lazy var stackView: UIStackView = {
+    public lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [])
         stackView.axis = .horizontal
         stackView.spacing = 0
