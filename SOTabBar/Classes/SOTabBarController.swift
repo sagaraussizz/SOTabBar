@@ -95,7 +95,7 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
         tabBar.didSelectTab(index: index)
     }
     
-    public func setTabbar(_ isHidden: Bool, _ index: Int? = nil, isAnimated: Bool = false) {
+    public func setTabbar(_ isHidden: Bool, _ index: Int = 0, isAnimated: Bool = false) {
         
         UIView.animate(withDuration: isAnimated ? 0.3 : 0, animations: { [weak self] in
             
@@ -106,9 +106,7 @@ open class SOTabBarController: UIViewController, SOTabBarDelegate {
             self.view.layoutIfNeeded()
         }) { [weak self] isComplete in
             
-            if let index = index {
-                self?.tabBar.animateTitle(index: index)
-            }
+            self?.tabBar.animateTitle(index: index)
         }
     }
     
